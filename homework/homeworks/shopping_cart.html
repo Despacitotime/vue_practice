@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    table{
+      border-collapse: collapse;
+      border: 1px solid #e9e9e9;
+      border-spacing: 0;
+    }
+    th,td{
+      padding: 8px 16px;
+      border: 1px solid #e9e9e9;
+    }
+    th{
+      background-color: #f7f7f7;
+      color: #5c6b77;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<!--需求-->
+<!--写一个购物车列表，包含基本的信息展示、删除信息、增/减个数的功能-->
+<div id="app">
+  <div v-if="books.length">
+    <table>
+      <thead>
+      <tr>
+        <th></th>
+        <th>书籍名称</th>
+        <th>出版日期</th>
+        <th>价格</th>
+        <th>购买数量</th>
+        <th>操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="(item,index) in books">
+        <th>{{item.id}}</th>
+        <th>{{item.name}}</th>
+        <th>{{item.pubDate}}</th>
+        <!--普通写法-->
+        <!--<th>￥{{item.price.toFixed(2)}}</th>-->
+        <!--方法写法-->
+        <!--<th>{{getFinalPrice(item.price)}}</th>-->
+        <!--使用过滤器的写法-->
+        <th>{{item.price|showStandard}}</th>
+        <th>
+          <!--通过:disabled限制减小的最小值-->
+          <button @click="decrement(index)" :disabled="item.number==1">-</button>
+          {{item.number}}
+          <button @click="increment(index)">+</button>
+        </th>
+        <th>
+          <button @click="removeBtn(index)">移除</button>
+        </th>
+        <!--      <th v-for="value in item">{{value}}</th>-->
+        <!--      <th>-->
+        <!--        <button>移除</button>-->
+        <!--      </th>-->
+      </tr>
+      </tbody>
+    </table>
+    <h2>总价格：{{totalPrice|showStandard}}</h2>
+  </div>
+  <h2 v-else>购物车为空</h2>
+</div>
+<script src="../js/vue.js"></script>
+<script>
+  /*给数据保留两位小数：xx.toFixed(2)*/
+  const app = new Vue({
+      el:'#app',
+      data:{
+          books:[
+              {
+                  id:1,
+                  name:'《算法导论》',
+                  pubDate:'2006-9',
+                  price:85.00,
+                  number:1
+              },
+              {
+                  id:2,
+                  name:'《UNIX编程艺术》',
+                  pubDate:'2006-2',
+                  price:85.00,
+                  number:1
+              },
+              {
+                  id:3,
+                  name:'《编程珠玑》',
+                  pubDate:'2008-10',
+                  price:85.00,
+                  number:1
+              },
+              {
+                  id:4,
+                  name:'《代码大全》',
+                  pubDate:'2006-3',
+                  price:85.00,
+                  number:1
+              }
+          ]
+      },
+      methods:{
+          getFinalPrice(price){
+              return '￥'+price.toFixed(2);
+          },
+          decrement(index){
+              //限制减小的最低到1，方式一：
+              // let num =  this.books[index].number;
+              // if(num > 1){
+              //     this.books[index].number--
+              // }
+              this.books[index].number--
+          },
+          increment(index){
+              this.books[index].number++
+          },
+          removeBtn(index){
+              this.books.splice(index,1)
+          }
+      },
+      computed:{
+          totalPrice(){
+              let totalPrice = 0;
+              for(let i = 0;i < this.books.length;i++){
+                  totalPrice+=this.books[i].price
+              }
+              return totalPrice
+          }
+      },
+      filters:{
+          showStandard(price){
+              return '￥'+price.toFixed(2)
+          }
+      }
+  })
+</script>
+</body>
+</html>
